@@ -1,4 +1,4 @@
 # random-notes
 
 
-<http://username.github.io/random-notes>
+<http://sordina.github.io/random-notes/>
