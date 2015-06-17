@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<title> random notes </title>
+		<script type="text/javascript" charset="utf-8" src="http://www.vexflow.com/vextab/support/vexflow-min.js"> </script>
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	</head>
+
+	<body>
+
+		<input style="width: 800px;" id="slider" type="range" min="1" max="60" step="1" value="3" />
+
+		<br /> <br /> <br />
+
+		<script type="text/javascript" charset="utf-8">
+
+			function oneOf(a) {
+				return a[Math.floor(Math.random() * a.length)]
+			}
+
+			function randomNote() {
+				var letter   = oneOf(["a","a#","b","c","d","e","f","g"]);
+				var number   = oneOf(["4","5"]);
+				var note     = new Vex.Flow.StaveNote({ keys: [letter + "/" + number], duration: "q" })
+
+				if     (Math.random() > 0.9) { note.addAccidental(0, new Vex.Flow.Accidental("#")) }
+				else if(Math.random() > 0.9) { note.addAccidental(0, new Vex.Flow.Accidental("b")) }
+
+				return note
+			}
+
+			function foo(s, canvas) {
+				var renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
+				var ctx      = renderer.getContext();
+				var stave    = new Vex.Flow.Stave(10, 0, 500);
+
+				stave.addClef(oneOf(["treble", "bass", "tenor"])).setContext(ctx).draw();
+
+				var notes = [ randomNote(), randomNote(), randomNote(), randomNote() ];
+				var voice = new Vex.Flow.Voice({ num_beats: 4, beat_value: 4, resolution: Vex.Flow.RESOLUTION });
+				voice.addTickables(notes);
+				var formatter = new Vex.Flow.Formatter().joinVoices([voice]).format([voice], 500);
+				voice.draw(ctx, stave);
+			}
+
+			function remove(s, e) {
+				setTimeout(function() { e.slideUp('slow', function() { $(this).remove(); }) }, 1000 * 4 * s)
+			}
+
+			var colors = ['#a04', '#0a4', '#40a', '#aa2']
+			var i = 0;
+
+			function bar() {
+				var s = $("#slider")[0].value;
+				i++;
+				var cvs = $('<canvas style="margin-left: auto; margin-right: auto; padding: 0; display: block;" width="800" height="120" />')
+				var div = $('<div />'); div.append(cvs); div.css({"padding-top": "12px", "border-width": "2px 0 0 10px", "border-style": "solid", "border-color": colors[i % 3]})
+				$("body").append(div)
+				foo(s, cvs[0])
+				remove(s, div)
+				setTimeout(bar, 1000 * s)
+			}
+
+			bar()
+
+		</script>
+	</body>
+</html>
